@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  cade-db:
+    image: mysql
+    container_name: cade-db
+    volumes:
+      - cade-db-data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --innodb-use-native-aio=0
+    restart: always
+    ports:
+      - 23632:3306
+    environment:
+      MYSQL_DATABASE: cade_db
+      MYSQL_ROOT_PASSWORD: root
+volumes:
+  cade-db-data:
