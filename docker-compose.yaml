@@ -12,5 +12,13 @@ services:
     environment:
       MYSQL_DATABASE: cade_db
       MYSQL_ROOT_PASSWORD: root
+  cade-cache:
+    image: redis
+    container_name: cade-cache
+    ports:
+      - 23732:6379
+    volumes:
+      - cade-cache-data:/var/lib/redis
 volumes:
   cade-db-data:
+  cade-cache-data:

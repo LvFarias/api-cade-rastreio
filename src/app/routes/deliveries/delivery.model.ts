@@ -28,7 +28,7 @@ export class DeliveryModel extends Model {
         get(this) { return JSON.parse(this.getDataValue('fields')); },
         set(value) { this.setDataValue('fields', JSON.stringify(value)); }
     })
-    @ApiProperty({ type: [Field] })
+    @ApiProperty({ type: [Field], isArray: true })
     fields: Array<Field>;
 
     @HasMany(() => OrderModel, 'delivery_id')

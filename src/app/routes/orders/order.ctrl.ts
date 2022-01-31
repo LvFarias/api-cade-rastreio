@@ -1,8 +1,12 @@
-import { Body, Controller, Delete, Get, HttpException, Param, Post, Put } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { OrderModel } from './order.model';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ReqUser } from 'src/app/decorators/user.decorator';
+import { UserAuthGuard } from 'src/app/guards/user.guard';
+import { OrderCreateDTO, OrderDTO, OrderEditDTO } from './order.dto';
 import { OrderService } from './order.service';
 
+@ApiBearerAuth()
+@UseGuards(UserAuthGuard)
 @ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
@@ -11,35 +15,45 @@ export class OrderController {
     ) { }
 
     @Post()
-    @ApiBody({ type: OrderModel })
-    async create(@Body() order: OrderModel): Promise<any> {
-        await this.orderService.create(order).catch(_ => new HttpException('', 500));
-        return true;
+    @HttpCode(201)
+    @ApiBody({ type: OrderCreateDTO })
+    async create(@ReqUser('id') user_id: number, @Body() order: OrderCreateDTO): Promise<void> {
+        await this.orderService.createOrder(user_id, order).catch(e => { throw new HttpException(e, 500) });
+        return;
     }
 
     @Get()
-    async list(): Promise<any> {
-        return this.orderService.list();
+    @HttpCode(200)
+    @ApiResponse({ type: OrderDTO, status: 200, isArray: true })
+    async list(@ReqUser('id') user_id: number): Promise<Array<OrderDTO>> {
+        return this.orderService.list({ user_id }).catch(e => { throw new HttpException(e, 500) });
     }
 
     @Get(':id')
-    @ApiParam({ name: 'id', type: 'number' })
-    async getAddressById(@Param('id') id: number): Promise<OrderModel | void> {
-        const res = await this.orderService.findById(id).catch(console.log);
-        if (!res) new HttpException('not_foud', 404);
+    @HttpCode(200)
+    @ApiResponse({ type: OrderDTO, status: 200 })
+    @ApiParam({ name: 'id', type: Number })
+    async getDetails(@ReqUser('id') user_id: number, @Param('id') id: number): Promise<OrderDTO> {
+        const res = await this.orderService.findById(id, user_id).catch(e => { throw new HttpException(e, 500) });
+
+        if (!res) throw new HttpException('order not found', 404);
+
         return res;
     }
 
     @Put(':id')
-    @ApiBody({ type: 'any' })
-    async updateAddress(@Param('id') id: number, @Body() order: any): Promise<OrderModel | HttpException> {
-        return this.orderService.updateById(id, order).catch(_ => new HttpException('', 500));
+    @HttpCode(200)
+    @ApiBody({ type: OrderEditDTO })
+    async update(@ReqUser('id') user_id: number, @Param('id') id: number, @Body() order: OrderEditDTO): Promise<void> {
+        await this.orderService.updateById(id, order, user_id).catch(e => { throw new HttpException(e, 500) });
+        return;
     }
 
     @Delete(':id')
-    @ApiParam({ name: 'id', type: 'number' })
-    async removeAddress(@Param('id') id: number): Promise<true> {
-        await this.orderService.remove(id).catch(_ => new HttpException('', 500));
-        return true;
+    @HttpCode(200)
+    @ApiParam({ name: 'id', type: Number })
+    async removeAddress(@ReqUser('id') user_id: number, @Param('id') id: number): Promise<void> {
+        await this.orderService.remove(id, user_id).catch(e => { throw new HttpException(e, 500) });
+        return;
     }
 }

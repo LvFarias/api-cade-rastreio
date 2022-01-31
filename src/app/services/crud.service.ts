@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { literal, Op } from 'sequelize';
-import { Model, ModelCtor, ModelStatic } from 'sequelize-typescript';
+import { Model, ModelCtor } from 'sequelize-typescript';
 import { OptionList } from '../interfaces/optionList';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class CrudService<T extends Model> {
 
 	constructor(private readonly repository: ModelCtor<T>) { }
 
-	async create(entity: T): Promise<T> {
+	async create(entity: any): Promise<T> {
 		return this.repository.create(entity);
 	}
 
@@ -80,16 +80,30 @@ export class CrudService<T extends Model> {
 		return this.repository.findOne(options);
 	}
 
-	async findById(id: number, fields: Array<string> = []): Promise<T> {
-		return this.findOne({ id }, fields);
+	async findById(id: number, user_id?: number, fields: Array<string> = []): Promise<T> {
+		const filter = { id, user_id };
+		if (!user_id) delete filter.user_id;
+		return this.findOne(filter, fields);
+	}
+
+	async findByUser(user_id: number, fields: Array<string> = []): Promise<T> {
+		return this.findOne({ user_id }, fields);
 	}
 
 	async findByEmail(email: string, fields: Array<string> = []): Promise<T> {
 		return this.findOne({ email }, fields);
 	}
 
-	async updateById(id: number, fields: any): Promise<T> {
-		let rep = await this.findById(id);
+	async updateById(id: number, fields: any, user_id?: number): Promise<T> {
+		let rep = await this.findById(id, user_id);
+		for (const key in fields) {
+			rep[key] = fields[key];
+		}
+		return rep.save();
+	}
+
+	async updateByUser(user_id: number, fields: any): Promise<T> {
+		let rep = await this.findOne({ user_id });
 		for (const key in fields) {
 			rep[key] = fields[key];
 		}
@@ -102,10 +116,12 @@ export class CrudService<T extends Model> {
 		return this.repository.update(fields, options);
 	}
 
-	async remove(id: number): Promise<void> {
-		const filter: any = { id };
+	async remove(id: number, user_id?: number): Promise<void> {
+		const filter = { id, user_id };
 
-		const options: any = {};
+		if (!user_id) delete filter.user_id;
+
+		const options = {};
 		options['where'] = this.buildWhereByFilter(filter);
 		await this.repository.destroy(options);
 	}

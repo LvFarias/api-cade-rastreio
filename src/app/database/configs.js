@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-// const { db } = require('../../src/libs/logger');
-
 module.exports = {
   logging: console.log,
   dialect: 'mysql',

@@ -1,46 +1,24 @@
-import { Body, Controller, Delete, Get, HttpException, Param, Post, Put } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, HttpException, Put, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ReqUser } from 'src/app/decorators/user.decorator';
+import { UserAuthGuard } from 'src/app/guards/user.guard';
+import { UserConfigDTO } from '../user.dto';
 import { UserConfigModel } from './config.model';
 import { UserConfigService } from './config.service';
 
-@ApiTags('Users')
-@Controller('users/confg')
+@ApiBearerAuth()
+@UseGuards(UserAuthGuard)
+@ApiTags('User')
+@Controller('user/confg')
 export class UserConfigController {
     constructor(
         private userConfigService: UserConfigService,
     ) { }
 
-    @Post()
-    @ApiBody({ type: UserConfigModel })
-    async create(@Body() delivery: UserConfigModel): Promise<any> {
-        await this.userConfigService.create(delivery).catch(_ => new HttpException('', 500));
-        return true;
-    }
-
-    @Get()
-    async list(): Promise<any> {
-        return this.userConfigService.list();
-    }
-
-    @Get(':id')
-    @ApiParam({ name: 'id', type: 'number' })
-    async getAddressById(@Param('id') id: number): Promise<UserConfigModel | void> {
-        const res = await this.userConfigService.findById(id).catch(console.log);
-        if (!res) new HttpException('not_foud', 404);
-        return res;
-    }
-
-    @Put(':id')
-    @ApiBody({ type: 'any' })
-    async updateAddress(@Param('id') id: number, @Body() delivery: any): Promise<any> {
-        await this.userConfigService.updateById(id, delivery).catch(_ => new HttpException('', 500));
-        return true;
-    }
-
-    @Delete(':id')
-    @ApiParam({ name: 'id', type: 'number' })
-    async removeAddress(@Param('id') id: number): Promise<true> {
-        await this.userConfigService.remove(id).catch(_ => new HttpException('', 500));
-        return true;
+    @Put()
+    @ApiBody({ type: UserConfigDTO })
+    async updateAddress(@ReqUser('id') userId: number, @Body() config: UserConfigDTO): Promise<void> {
+        await this.userConfigService.updateByUser(userId, config).catch(e => { throw new HttpException(e, 500) });
+        return;
     }
 }
