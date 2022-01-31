@@ -26,8 +26,8 @@ export class EmailService {
         return new CreateContact.constructFromObject({
             email: contact.email,
             attributes: {
-                NAME: name,
-                LAST_NAME: contact.name.split(`${name} `)[1],
+                NOME: name,
+                SOBRENOME: contact.name.split(`${name} `)[1],
             },
             updateEnabled: false,
             emailBlacklisted: false,
@@ -63,7 +63,7 @@ export class EmailService {
         });
     }
 
-    private async sendEmail(templateId: Number, to: String, params: any = {}) {
+    private async sendEmail(templateId: Number, to: String, params?: any) {
         return new Promise((res, rej) => {
             if (process.env.NODE_ENV === 'dev') {
                 this.logger.debug('Email-Mock [sendTransacEmail] called with data: ', { to, ...params });
