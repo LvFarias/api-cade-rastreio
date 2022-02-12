@@ -3,13 +3,14 @@ require('dotenv').config();
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { logger } from './app/libs/logger';
+import { AppModule } from '@src/app.module';
+import { winstonConfig } from '@src/configs/winston';
+import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
-    logger: logger,
+    logger: WinstonModule.createLogger(winstonConfig),
   });
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
