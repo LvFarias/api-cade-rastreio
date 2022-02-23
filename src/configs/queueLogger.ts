@@ -7,7 +7,6 @@ export const queueLoggerConfig: WinstonModuleOptions = {
         new winston.transports.Console({
             level: process.env.NODE_ENV == 'dev' ? 'debug' : 'info',
             format: winston.format.combine(
-                winston.format.json(),
                 utilities.format.nestLike('Cade-Queue'),
                 process.env.NODE_ENV == 'dev' ? winston.format.colorize() : winston.format.uncolorize(),
             )

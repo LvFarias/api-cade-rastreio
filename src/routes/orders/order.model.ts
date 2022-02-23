@@ -55,21 +55,18 @@ export default class OrderModel extends Model {
 
     @Column
     lastSync: Date;
+    
+    @Column
+    inSync: Boolean;
 
     @Column
     shippingDate: Date;
-
-    @Column
-    expectedDate: Date;
 
     @Column
     service: string;
 
     @Column
     origin: string;
-
-    @Column
-    destine: string;
 
     @Column({
         type: DataType.TEXT,

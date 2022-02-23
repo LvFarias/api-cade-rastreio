@@ -12,10 +12,10 @@ export class OrderDTO {
     desc: string;
 
     @ApiProperty()
-    delivery_id?: Number;
+    delivery_id?: number;
 
     @ApiProperty()
-    user_id?: Number;
+    user_id?: number;
 
     @ApiProperty({ type: Value, isArray: true })
     values: Array<Value>;

@@ -16,11 +16,8 @@ export default class OrderService extends CrudService<OrderModel> {
 
     async createOrder(user_id: number, order: OrderCreateDTO): Promise<OrderModel> {
         order['user_id'] = user_id;
-        order['status'] = 'Não Sincronizado';
-        order['statusLog'] = {
-            status: order['status'],
-            date: new Date(),
-        };
+        order['status'] = 'unposted';
+        order['statusLog'] = [];
         return super.create(order);
     }
 }

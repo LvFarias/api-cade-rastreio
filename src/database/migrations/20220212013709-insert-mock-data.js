@@ -8,12 +8,12 @@ module.exports = {
 	async up(queryInterface, Sequelize) {
 		await mockUser.up(queryInterface, Sequelize);
 		await mockUserConfig.up(queryInterface, Sequelize);
-		await mockOrder.up(queryInterface, Sequelize);
+		// await mockOrder.up(queryInterface, Sequelize);
 	},
 
 	async down(queryInterface, Sequelize) {
-		await mockUser.down(queryInterface, Sequelize);
+		// await mockOrder.down(queryInterface, Sequelize);
 		await mockUserConfig.down(queryInterface, Sequelize);
-		await mockOrder.down(queryInterface, Sequelize);
+		await mockUser.down(queryInterface, Sequelize);
 	}
 };

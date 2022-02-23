@@ -17,12 +17,12 @@ module.exports = {
 			user_id: user,
 			values: JSON.stringify([{
 				alias: 'cod',
-				value: 'AB123456789BR',
+				value: 'OS845630105BR',
 			}]),
-			status: 'Não Sincronizado',
+			status: 'unposted',
 			lastSync: new Date(),
 			statusLog: JSON.stringify([{
-				status: 'Não Sincronizado',
+				status: 'unposted',
 				date: new Date(),
 			}]),
 			createdAt: new Date(),

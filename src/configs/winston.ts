@@ -7,7 +7,6 @@ export const winstonConfig: WinstonModuleOptions = {
         new winston.transports.Console({
             level: process.env.NODE_ENV == 'dev' ? 'debug' : 'http',
             format: winston.format.combine(
-                winston.format.json(),
                 utilities.format.nestLike('Cade-API'),
                 process.env.NODE_ENV == 'dev' ? winston.format.colorize() : winston.format.uncolorize(),
             )

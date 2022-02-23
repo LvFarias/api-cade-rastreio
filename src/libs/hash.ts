@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 export default class Hash {
     static async generateKey(value: string): Promise<string> {

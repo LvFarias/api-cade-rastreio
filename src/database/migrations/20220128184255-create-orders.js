@@ -36,19 +36,17 @@ module.exports = {
 			lastSync: {
 				type: Sequelize.DATE
 			},
-			shippingDate: {
-				type: Sequelize.DATE
+			inSync: {
+				defaultValue: false,
+				type: Sequelize.BOOLEAN,
 			},
-			expectedDate: {
+			shippingDate: {
 				type: Sequelize.DATE
 			},
 			service: {
 				type: Sequelize.STRING(45)
 			},
 			origin: {
-				type: Sequelize.STRING(45)
-			},
-			destine: {
 				type: Sequelize.STRING(45)
 			},
 			statusLog: {
